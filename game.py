@@ -23,7 +23,7 @@ class Game:
     while True:
       if pygame.event.get(pygame.QUIT): break
       
-      self.deltaTime = self.clock.tick() / 1000
+      self.deltaTime = self.clock.tick(120) / 1000
       
       self.arena.update(self)
       self.player.update(self)

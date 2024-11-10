@@ -11,11 +11,13 @@ class Player(GameObject):
   def __init__(self):
     self.player_size = Vector2(2, 3)
     self.shadow_height = 2
-    self.speed = 150
-    self.jump_force = 5
+    self.speed = 100
+    self.jump_force = 20
+    self.gravity = 50
     self.ground_timer_limit = 0.1
     self.jump_timer_limit = 0.1
     
+    self.last_position = Vector2(0, 0)
     self.position = Vector2(0, 0)
     self.velocity = Vector2(0, 0)
     
@@ -27,10 +29,9 @@ class Player(GameObject):
 
   def move(self, input_vector: Vector2, deltaTime: float):
     if input_vector.magnitude() == 0: return
-    movement_vector = input_vector.normalize() * self.speed * deltaTime
     
+    movement_vector = input_vector.normalize() * self.speed * deltaTime
     self.position += movement_vector
-    self.velocity += movement_vector
     
   def get_input_vector(self) -> Vector2:
     keys = pygame.key.get_pressed()
@@ -58,10 +59,12 @@ class Player(GameObject):
       )
     
   def update(self, game: 'Game'):
-    self.velocity *= 0
+    self.last_position = self.position.copy()
     
     self.move(self.get_input_vector(), game.deltaTime)
     self.bind_to_arena(game)
+    
+    self.velocity = (self.position - self.last_position) / (game.deltaTime if game.deltaTime > 0 else 1)
     
     # Reduce ground timer
     if self.ground_timer > 0: self.ground_timer -= game.deltaTime
@@ -73,7 +76,7 @@ class Player(GameObject):
     
     # Apply gravity
     if self.position_y > 0:
-      self.velocity_y -= 9.8 * game.deltaTime
+      self.velocity_y -= self.gravity * game.deltaTime
       self.position_y += self.velocity_y * game.deltaTime
     else:
       self.position_y = 0
@@ -96,30 +99,36 @@ class Player(GameObject):
     )
     
   def get_player_rects(self) -> list[Rect]:
-    if self.position_y > 0 and self.position_y < 1:
-      return [
-        Rect(
-          round(self.position.x), 
-          round(self.position.y), 
-          self.player_size.x, 
-          self.player_size.y
-        ),
-        Rect(
-          round(self.position.x), 
-          round(self.position.y + 1), 
-          self.player_size.x, 
-          self.player_size.y
-        )
-      ]
+    basic_rect = Rect(
+      round(self.position.x),
+      round(self.position.y),
+      self.player_size.x,
+      self.player_size.y
+    )
     
-    return [
-      Rect(
-        round(self.position.x), 
-        round(self.position.y), 
-        self.player_size.x, 
-        self.player_size.y
+    basic_rect.y -= self.position_y
+    
+    if self.position_y > 0:
+      basic_rect.width -= 1
+      
+    if abs(self.velocity.y) > 1:
+      basic_rect.top += 1
+      basic_rect.height -= 1
+      
+    if abs(self.velocity.x) > 1:
+      top_rect = Rect(
+        basic_rect.x + (-1 if self.velocity.x > 0 else 1),
+        basic_rect.y,
+        basic_rect.width,
+        1
       )
-    ]
+      
+      basic_rect.top += 1
+      basic_rect.height -= 1
+      
+      return [top_rect, basic_rect]
+    
+    return [basic_rect]
     
   def render(self, surface: pygame.Surface):
     player_rects = self.get_player_rects()
