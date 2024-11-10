@@ -3,6 +3,7 @@ from pygame.time import Clock
 import ctypes
 from player import Player
 from arena import Arena
+from line import Line
 from constants import GAME_SIZE, COLOR_VOID
 
 class Game:
@@ -17,7 +18,7 @@ class Game:
     
     self.arena = Arena()
     self.player = Player()
-    self.lines = []
+    self.lines: list[Line] = []
 
   def mainloop(self):
     while True:
@@ -27,11 +28,13 @@ class Game:
       
       self.arena.update(self)
       self.player.update(self)
+      for line in self.lines: line.update(self)
       
       self.surface.fill(COLOR_VOID)
       
       self.arena.render(self.surface)
       self.player.render(self.surface)
+      for line in self.lines: line.render(self.surface)
       
       self.draw()
 

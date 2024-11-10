@@ -11,7 +11,7 @@ class Player(GameObject):
   def __init__(self):
     self.player_size = Vector2(2, 3)
     self.shadow_height = 2
-    self.speed = 100
+    self.speed = 60
     self.jump_force = 20
     self.gravity = 50
     self.ground_timer_limit = 0.1
@@ -59,11 +59,10 @@ class Player(GameObject):
       )
     
   def update(self, game: 'Game'):
+    # Apply wasd movement and calculate velocity
     self.last_position = self.position.copy()
-    
     self.move(self.get_input_vector(), game.deltaTime)
     self.bind_to_arena(game)
-    
     self.velocity = (self.position - self.last_position) / (game.deltaTime if game.deltaTime > 0 else 1)
     
     # Reduce ground timer
