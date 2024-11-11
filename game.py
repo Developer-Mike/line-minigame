@@ -3,7 +3,7 @@ from pygame.time import Clock
 import ctypes
 from player import Player
 from arena import Arena
-from line import Line
+import time
 
 class GameState:
   MENU = 0
@@ -25,9 +25,12 @@ class Game:
     self.state = GameState.PLAYING # TODO: Change to GameState.MENU
     
     # TODO: Deferring the creation of these objects to the start of the game
+    self.start_time = time.time()
     self.arena = Arena(self)
     self.player = Player(self)
-    self.lines: list[Line] = []
+
+  def get_elapsed_time(self):
+    return time.time() - self.start_time
 
   def mainloop(self):
     while True:
@@ -40,14 +43,12 @@ class Game:
       
       if self.state == GameState.MENU:
         pass # TODO: Implement menu screen
-      elif self.state == GameState.PLAYING:
+      elif self.state == GameState.PLAYING:        
         self.arena.update()
         self.player.update()
-        for line in self.lines: line.update()
         
         self.arena.render(self.surface)
         self.player.render(self.surface)
-        for line in self.lines: line.render(self.surface)
       elif self.state == GameState.GAME_OVER:
         pass # TODO: Implement game over screen
       
