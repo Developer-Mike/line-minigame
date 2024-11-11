@@ -23,12 +23,9 @@ class Game:
     pygame.init()
     
     self.clock = Clock()
-    self.state = GameState.PLAYING # TODO: Change to GameState.MENU
+    self.state = GameState.MENU
     
-    # TODO: Deferring the creation of these objects to the start of the game
-    self.start_time = time.time()
-    self.arena = Arena(self)
-    self.player = Player(self)
+    self.start_game() # TODO: Implement menu screen
 
   def get_elapsed_time(self):
     return time.time() - self.start_time
@@ -61,7 +58,11 @@ class Game:
     pygame.display.flip()
     
   def start_game(self):
-    pass
+    self.state = GameState.PLAYING
+    self.start_time = time.time()
+    
+    self.arena = Arena(self)
+    self.player = Player(self)
   
   def game_over(self):
-    pass
+    self.state = GameState.GAME_OVER

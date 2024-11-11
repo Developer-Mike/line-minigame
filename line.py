@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
   from game import Game
 
-class Line(GameObject): 
+class Line(GameObject):
   line_width = 2
   line_color = (255, 255, 255)
   teeth_frequency = 3
@@ -20,17 +20,19 @@ class Line(GameObject):
     if self.direction.x < 0: self.position.x = self.game.game_size
     if self.direction.y < 0: self.position.y = self.game.game_size
     
-  def update(self):
-    self.position += self.direction * self.speed * self.game.deltaTime
-
-  def render(self, surface: pygame.Surface):
-    line_rect = Rect(
+  def get_rect(self) -> Rect:
+    return Rect(
       round(self.position.x),
       round(self.position.y),
       max(self.line_width, abs(self.direction.y * self.game.game_size)),
       max(self.line_width, abs(self.direction.x * self.game.game_size))
     )
-     
+    
+  def update(self):
+    self.position += self.direction * self.speed * self.game.deltaTime
+
+  def render(self, surface: pygame.Surface):
+    line_rect = self.get_rect()     
     pygame.draw.rect(
       surface,
       self.line_color,

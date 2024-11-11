@@ -78,6 +78,12 @@ class Arena(GameObject):
     )
     
     # Draw score
+    self.render_score(surface)
+    
+    # Draw lines    
+    for line in self.lines: line.render(surface)
+    
+  def render_score(self, surface: pygame.Surface):
     score_text_content = str(int(self.game.get_elapsed_time()))
     score_text = self.score_font.render(
       score_text_content,
@@ -91,8 +97,6 @@ class Arena(GameObject):
     score_text_rect.left = int((self.game.game_size - score_text_rect.width) / 2)
     
     surface.blit(score_text, score_text_rect)
-    
-    
     
     # Draw tenths of a second
     tenths_text_content = str(int(self.game.get_elapsed_time() * 10) % 10)
@@ -108,6 +112,3 @@ class Arena(GameObject):
     tenths_text_rect.left = score_text_rect.right + (self.score_font_size // 8)
     
     surface.blit(tenths_text, tenths_text_rect)
-    
-    # Draw lines    
-    for line in self.lines: line.render(surface)

@@ -68,13 +68,13 @@ class Player(GameObject):
     self.bind_to_arena()
     self.velocity = (self.position - self.last_position) / (self.game.deltaTime if self.game.deltaTime > 0 else 1)
     
+    # Check for collision
+    collided = self.check_collision()
+    if collided: self.game.game_over()
+    
     # Reduce ground timer
     if self.ground_timer > 0: self.ground_timer -= self.game.deltaTime
     if self.jump_timer > 0: self.jump_timer -= self.game.deltaTime
-    
-    # Check for jump
-    if pygame.key.get_pressed()[pygame.K_SPACE]:
-      self.jump_timer = self.jump_timer_limit
     
     # Apply gravity
     if self.position_y > 0:
@@ -84,11 +84,33 @@ class Player(GameObject):
       self.position_y = 0
       self.velocity_y = 0
       self.ground_timer = self.ground_timer_limit
+    
+    # Check for jump
+    if pygame.key.get_pressed()[pygame.K_SPACE]:
+      self.jump_timer = self.jump_timer_limit
       
     # Apply jump
     if self.jump_timer > 0 and self.ground_timer > 0:
       self.velocity_y = self.jump_force
       self.position_y += self.velocity_y * self.game.deltaTime
+      
+  def check_collision(self) -> bool:
+    if self.position_y > 0: return False # No collision if player is in the air
+    
+    player_hitbox = Rect(
+      round(self.position.x),
+      round(self.position.y),
+      self.player_size.x,
+      self.player_size.y
+    )
+    
+    for line in self.game.arena.lines:
+      line_hitbox = line.get_rect()
+      
+      if player_hitbox.colliderect(line_hitbox):
+        return True
+    
+    return False
       
   def get_shadow_rect(self, player_rect: Rect) -> Rect:
     shadow_width = player_rect.width + 2
