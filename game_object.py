@@ -5,7 +5,10 @@ if TYPE_CHECKING:
   from game import Game
 
 class GameObject:
-  def update(self, game: 'Game'):
+  def __init__(self, game: 'Game'):
+    self.game = game
+  
+  def update(self):
     pass
   
   def render(self, surface: pygame.Surface):

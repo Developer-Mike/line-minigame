@@ -1,21 +1,24 @@
 import pygame
 from pygame import Vector2, Rect
 from game_object import GameObject
-from constants import COLOR_PLAYER, COLOR_SHADOW
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
   from game import Game
 
 class Player(GameObject):
-  def __init__(self):
-    self.player_size = Vector2(2, 3)
-    self.shadow_height = 2
-    self.speed = 60
-    self.jump_force = 20
-    self.gravity = 100
-    self.ground_timer_limit = 0.1
-    self.jump_timer_limit = 0.1
+  player_size = Vector2(2, 3)
+  player_color = (255, 255, 255)
+  shadow_color = (0, 0, 0, 150)
+  shadow_height = 2
+  speed = 60
+  jump_force = 20
+  gravity = 100
+  ground_timer_limit = 0.1
+  jump_timer_limit = 0.1
+    
+  def __init__(self, game: 'Game'):
+    super().__init__(game)
     
     self.last_position = Vector2(0, 0)
     self.position = Vector2(0, 0)
@@ -44,7 +47,7 @@ class Player(GameObject):
     
     return input_vector
   
-  def bind_to_arena(self, game: 'Game'):
+  def bind_to_arena(self):
     hitbox_rect = Rect(
       round(self.position.x), 
       round(self.position.y), 
@@ -52,22 +55,22 @@ class Player(GameObject):
       self.player_size.y
     )
     
-    if not game.arena.rect.contains(hitbox_rect):
+    if not self.game.arena.rect.contains(hitbox_rect):
       self.position = Vector2(
-        max(game.arena.rect.left, min(game.arena.rect.right - self.player_size.x, self.position.x)),
-        max(game.arena.rect.top, min(game.arena.rect.bottom - self.player_size.y, self.position.y))
+        max(self.game.arena.rect.left, min(self.game.arena.rect.right - self.player_size.x, self.position.x)),
+        max(self.game.arena.rect.top, min(self.game.arena.rect.bottom - self.player_size.y, self.position.y))
       )
     
-  def update(self, game: 'Game'):
+  def update(self):
     # Apply wasd movement and calculate velocity
     self.last_position = self.position.copy()
-    self.move(self.get_input_vector(), game.deltaTime)
-    self.bind_to_arena(game)
-    self.velocity = (self.position - self.last_position) / (game.deltaTime if game.deltaTime > 0 else 1)
+    self.move(self.get_input_vector(), self.game.deltaTime)
+    self.bind_to_arena()
+    self.velocity = (self.position - self.last_position) / (self.game.deltaTime if self.game.deltaTime > 0 else 1)
     
     # Reduce ground timer
-    if self.ground_timer > 0: self.ground_timer -= game.deltaTime
-    if self.jump_timer > 0: self.jump_timer -= game.deltaTime
+    if self.ground_timer > 0: self.ground_timer -= self.game.deltaTime
+    if self.jump_timer > 0: self.jump_timer -= self.game.deltaTime
     
     # Check for jump
     if pygame.key.get_pressed()[pygame.K_SPACE]:
@@ -75,8 +78,8 @@ class Player(GameObject):
     
     # Apply gravity
     if self.position_y > 0:
-      self.velocity_y -= self.gravity * game.deltaTime
-      self.position_y += self.velocity_y * game.deltaTime
+      self.velocity_y -= self.gravity * self.game.deltaTime
+      self.position_y += self.velocity_y * self.game.deltaTime
     else:
       self.position_y = 0
       self.velocity_y = 0
@@ -85,7 +88,7 @@ class Player(GameObject):
     # Apply jump
     if self.jump_timer > 0 and self.ground_timer > 0:
       self.velocity_y = self.jump_force
-      self.position_y += self.velocity_y * game.deltaTime
+      self.position_y += self.velocity_y * self.game.deltaTime
       
   def get_shadow_rect(self, player_rect: Rect) -> Rect:
     shadow_width = player_rect.width + 2
@@ -135,9 +138,9 @@ class Player(GameObject):
     # Draw shadow
     shadow_rect = self.get_shadow_rect(player_rects[-1])
     shadow_surface = pygame.Surface(shadow_rect.size, pygame.SRCALPHA)
-    pygame.draw.rect(shadow_surface, COLOR_SHADOW, shadow_surface.get_rect())
+    pygame.draw.rect(shadow_surface, self.shadow_color, shadow_surface.get_rect())
     surface.blit(shadow_surface, shadow_rect)
     
     # Draw player
     for player_rect in player_rects:
-      pygame.draw.rect(surface, COLOR_PLAYER, player_rect)
+      pygame.draw.rect(surface, self.player_color, player_rect)

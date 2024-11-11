@@ -1,39 +1,52 @@
 from game_object import GameObject
 import pygame
 import random
-from pygame import Rect
-from constants import COLOR_ARENA, ARENA_SIZE, GAME_SIZE
-from line import Line, DIRECTION
+from pygame import Rect, Vector2
+from line import Line
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
   from game import Game
 
 class Arena(GameObject):
-  def __init__(self):
-    self.spawn_interval = 5
+  arena_color = (189, 75, 76)
+  arena_size = 48
+  line_spawn_interval = 5
+  line_start_speed = 10
+  line_directions = [
+    Vector2(1, 0),
+    Vector2(-1, 0),
+    Vector2(0, 1),
+    Vector2(0, -1)
+  ]
+  
+  def __init__(self, game: 'Game'):
+    super().__init__(game)
     
     self.rect = Rect(
-      (GAME_SIZE - ARENA_SIZE) / 2,
-      (GAME_SIZE - ARENA_SIZE) / 2,
-      ARENA_SIZE,
-      ARENA_SIZE
+      (self.game.game_size - self.arena_size) / 2,
+      (self.game.game_size - self.arena_size) / 2,
+      self.arena_size,
+      self.arena_size
     )
     
     self.spawn_timer = 0
 
-  def update(self, game: 'Game'):
-    self.spawn_timer -= game.deltaTime
+  def update(self):
+    self.spawn_timer -= self.game.deltaTime
     
     if self.spawn_timer <= 0:
-      self.spawn_timer = self.spawn_interval
+      self.spawn_timer = self.line_spawn_interval
       
-      direction = random.choice(list(DIRECTION.values()))
-      game.lines.append(Line(direction))
+      line_direction = random.choice(self.line_directions)
+      line_speed = self.line_start_speed # TODO: Implement line speed increase
+      
+      line = Line(self.game, line_direction, line_speed)
+      self.game.lines.append(line)
 
   def render(self, surface: pygame.Surface):
     pygame.draw.rect(
       surface,
-      COLOR_ARENA,
+      self.arena_color,
       self.rect
     )
