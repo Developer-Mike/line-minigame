@@ -11,12 +11,12 @@ if TYPE_CHECKING:
 class Arena(GameObject):
   arena_color = (189, 75, 76)
   arena_size = 48
-  line_spawn_interval = 5
-  line_spawn_interval_decrease = 0.1
-  min_line_spawn_interval = 1
-  line_start_speed = 10
-  line_speed_increase = 0.1
-  max_line_speed = 35
+  
+  score_color = (138, 54, 55)
+  score_font_type = 'assets/tiny-5.ttf'
+  score_font_size = 16
+  tenths_font_size = 8
+  
   line_directions = [
     Vector2(1, 0),
     Vector2(-1, 0),
@@ -24,8 +24,19 @@ class Arena(GameObject):
     Vector2(0, -1)
   ]
   
+  line_spawn_interval = 5
+  line_spawn_interval_decrease = 0.1
+  min_line_spawn_interval = 1
+  
+  line_start_speed = 10
+  line_speed_increase = 0.1
+  max_line_speed = 35
+  
   def __init__(self, game: 'Game'):
     super().__init__(game)
+    
+    self.score_font = pygame.font.Font(self.score_font_type, self.score_font_size)
+    self.tenths_font = pygame.font.Font(self.score_font_type, self.tenths_font_size)
     
     self.rect = Rect(
       (self.game.game_size - self.arena_size) / 2,
@@ -59,10 +70,44 @@ class Arena(GameObject):
     for line in self.lines: line.update()
 
   def render(self, surface: pygame.Surface):
+    # Draw arena
     pygame.draw.rect(
       surface,
       self.arena_color,
       self.rect
     )
     
+    # Draw score
+    score_text_content = str(int(self.game.get_elapsed_time()))
+    score_text = self.score_font.render(
+      score_text_content,
+      False,
+      self.score_color
+    )
+    
+    score_text_rect = score_text.get_rect()
+    score_text_rect.width -= self.score_font_size // 8 # Adjust for the font's padding
+    score_text_rect.top = int((self.game.game_size - score_text_rect.height) / 2)
+    score_text_rect.left = int((self.game.game_size - score_text_rect.width) / 2)
+    
+    surface.blit(score_text, score_text_rect)
+    
+    
+    
+    # Draw tenths of a second
+    tenths_text_content = str(int(self.game.get_elapsed_time() * 10) % 10)
+    tenths_text = self.tenths_font.render(
+      tenths_text_content,
+      False,
+      self.score_color
+    )
+    
+    tenths_text_rect = tenths_text.get_rect()
+    score_text_content_bottom = score_text_rect.bottom - (self.score_font_size // 8) # Adjust for the font's padding
+    tenths_text_rect.top = score_text_content_bottom - tenths_text_rect.height
+    tenths_text_rect.left = score_text_rect.right + (self.score_font_size // 8)
+    
+    surface.blit(tenths_text, tenths_text_rect)
+    
+    # Draw lines    
     for line in self.lines: line.render(surface)

@@ -20,6 +20,7 @@ class Game:
     
     self.window = pygame.display.set_mode(self.screen_size)
     self.surface = pygame.Surface([self.game_size, self.game_size])
+    pygame.init()
     
     self.clock = Clock()
     self.state = GameState.PLAYING # TODO: Change to GameState.MENU
