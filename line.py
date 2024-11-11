@@ -46,28 +46,22 @@ class Line(GameObject):
     offset = (line_rect.top if self.direction.x == 0 else line_rect.left) % self.teeth_frequency
     
     for i in range(0, GAME_SIZE, self.teeth_frequency):
-      tooth_offset = offset + i
-      
-      tooth_rect = Rect(
-        line_rect.left + (-1 if self.direction.y == 0 else tooth_offset),
-        line_rect.top + (-1 if self.direction.x == 0 else tooth_offset),
-        1, 1
-      )
-      
-      pygame.draw.rect(
-        surface,
-        COLOR_LINE,
-        tooth_rect
-      )
-      
-      tooth_rect = Rect(
-        line_rect.left + (self.line_width if self.direction.y == 0 else GAME_SIZE - tooth_offset),
-        line_rect.top + (self.line_width if self.direction.x == 0 else GAME_SIZE - tooth_offset),
-        1, 1
-      )
-      
-      pygame.draw.rect(
-        surface,
-        COLOR_LINE,
-        tooth_rect
-      )
+      for j in range(2):
+        tooth_offset_width = -1
+        tooth_offset_blade = offset + i
+        
+        if j % 2 == 0: 
+          tooth_offset_blade = GAME_SIZE - tooth_offset_blade
+          tooth_offset_width = self.line_width
+        
+        tooth_rect = Rect(
+          line_rect.left + (tooth_offset_width if self.direction.y == 0 else tooth_offset_blade),
+          line_rect.top + (tooth_offset_width if self.direction.x == 0 else tooth_offset_blade),
+          1, 1
+        )
+        
+        pygame.draw.rect(
+          surface,
+          COLOR_LINE,
+          tooth_rect
+        )
