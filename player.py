@@ -13,7 +13,7 @@ class Player(GameObject):
     self.shadow_height = 2
     self.speed = 60
     self.jump_force = 20
-    self.gravity = 50
+    self.gravity = 100
     self.ground_timer_limit = 0.1
     self.jump_timer_limit = 0.1
     
