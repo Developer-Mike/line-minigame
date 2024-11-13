@@ -11,7 +11,6 @@ if TYPE_CHECKING:
 class Arena(GameObject):
   arena_size = 48
   
-  score_color = (138, 54, 55)
   score_font_type = 'assets/tiny-5.ttf'
   score_font_size = 16
   tenths_font_size = 8
@@ -83,11 +82,7 @@ class Arena(GameObject):
     
   def render_score(self, surface: pygame.Surface):
     score_text_content = str(int(self.game.score))
-    score_text = self.score_font.render(
-      score_text_content,
-      False,
-      self.score_color
-    )
+    score_text = self.score_font.render(score_text_content, False, self.game.accent_color_dark)
     
     score_text_rect = score_text.get_rect()
     score_text_rect.width -= self.score_font_size // 8 # Adjust for the font's padding
@@ -98,11 +93,7 @@ class Arena(GameObject):
     
     # Draw tenths of a second
     tenths_text_content = str(int(self.game.score * 10) % 10)
-    tenths_text = self.tenths_font.render(
-      tenths_text_content,
-      False,
-      self.score_color
-    )
+    tenths_text = self.tenths_font.render(tenths_text_content, False, self.game.accent_color_dark)
     
     tenths_text_rect = tenths_text.get_rect()
     score_text_content_bottom = score_text_rect.bottom - (self.score_font_size // 8) # Adjust for the font's padding

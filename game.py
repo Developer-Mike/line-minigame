@@ -17,6 +17,7 @@ class GameState:
 class Game:
   background_color = (0, 0, 0)
   accent_color = (189, 75, 76)
+  accent_color_dark = (138, 54, 55)
   game_size = 64
   
   @property
@@ -28,9 +29,11 @@ class Game:
     
     self.window = pygame.display.set_mode(self.screen_size)
     self.surface = pygame.Surface([self.game_size, self.game_size])
-    pygame.init()
+    
+    pygame.display.set_caption('Line')
     
     self.clock = Clock()
+    pygame.init()
     
     self.return_to_menu()
     

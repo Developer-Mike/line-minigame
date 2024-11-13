@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 class Line(GameObject):
   line_width = 2
   line_color = (255, 255, 255)
+  shadow_color = (0, 0, 0)
   teeth_frequency = 3
   
   def __init__(self, game: 'Game', direction: Vector2, speed: float):
@@ -33,7 +34,7 @@ class Line(GameObject):
 
   def render(self, surface: pygame.Surface):
     line_rect = self.get_rect()     
-    pygame.draw.rect(
+    self.render_box(
       surface,
       self.line_color,
       line_rect
@@ -57,8 +58,45 @@ class Line(GameObject):
           1, 1
         )
         
-        pygame.draw.rect(
+        self.render_box(
           surface,
           self.line_color,
           tooth_rect
+        )
+        
+  def render_box(self, surface: pygame.Surface, color: tuple[int, int, int], rect: Rect):
+    for y in range(rect.top, rect.bottom):
+      for x in range(rect.left, rect.right):
+        pixel_rect = Rect(
+          x, y,
+          1, 1
+        )
+        
+        pixel_color = color
+        is_outside_of_arena = not self.game.arena.rect.contains(pixel_rect)
+        
+        # Chessboard pattern outside the arena
+        if is_outside_of_arena:
+          if x % 2 == y % 2: continue
+          pixel_color = self.game.accent_color_dark
+        
+        # Shadow of pixel
+        if not is_outside_of_arena:
+          shadow_rect = pixel_rect.move(0, 1)
+          
+          target_pixel_color = surface.get_at(shadow_rect.topleft)
+          target_pixel_rgb = target_pixel_color.r, target_pixel_color.g, target_pixel_color.b
+          
+          if target_pixel_rgb != color and target_pixel_rgb != self.shadow_color:
+            pygame.draw.rect(
+              surface,
+              self.shadow_color,
+              shadow_rect
+            )
+        
+        # Pixel itself
+        pygame.draw.rect(
+          surface,
+          pixel_color,
+          pixel_rect
         )

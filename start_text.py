@@ -6,7 +6,6 @@ if TYPE_CHECKING:
   from game import Game
 
 class StartText(GameObject):
-  font_color = (255, 255, 255)
   font_type = 'assets/tiny-5.ttf'
   font_size = 8
   text_content = "Press SPACE"
@@ -14,6 +13,8 @@ class StartText(GameObject):
   
   def __init__(self, game: 'Game'):
     super().__init__(game)
+    
+    self.font_color = self.game.accent_color_dark
     self.font = pygame.font.Font(self.font_type, self.font_size)
 
   def update(self):
