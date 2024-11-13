@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 class Player(GameObject):
   player_size = Vector2(2, 3)
   player_color = (255, 255, 255)
-  shadow_color = (0, 0, 0, 150)
+  shadow_color = (0, 0, 0)
   shadow_height = 2
   speed = 60
   jump_force = 20
@@ -158,10 +158,11 @@ class Player(GameObject):
     player_rects = self.get_player_rects()
     
     # Draw shadow
-    shadow_rect = self.get_shadow_rect(player_rects[-1])
-    shadow_surface = pygame.Surface(shadow_rect.size, pygame.SRCALPHA)
-    pygame.draw.rect(shadow_surface, self.shadow_color, shadow_surface.get_rect())
-    surface.blit(shadow_surface, shadow_rect)
+    pygame.draw.rect(
+      surface, 
+      self.shadow_color, 
+      self.get_shadow_rect(player_rects[-1])
+    )
     
     # Draw player
     for player_rect in player_rects:
