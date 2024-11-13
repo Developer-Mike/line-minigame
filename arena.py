@@ -52,15 +52,14 @@ class Arena(GameObject):
     self.spawn_timer -= self.game.deltaTime
     
     if self.spawn_timer <= 0:
-      elapsed_time = self.game.get_elapsed_time()
       self.spawn_timer = max(
-        self.line_spawn_interval - elapsed_time * self.line_spawn_interval_decrease, 
+        self.line_spawn_interval - self.game.score * self.line_spawn_interval_decrease, 
         self.min_line_spawn_interval
       )
       
       line_direction = random.choice(self.line_directions)
       line_speed = min(
-        self.line_start_speed + elapsed_time * self.line_speed_increase,
+        self.line_start_speed + self.game.score * self.line_speed_increase,
         self.max_line_speed
       )
       
@@ -84,7 +83,7 @@ class Arena(GameObject):
     for line in self.lines: line.render(surface)
     
   def render_score(self, surface: pygame.Surface):
-    score_text_content = str(int(self.game.get_elapsed_time()))
+    score_text_content = str(int(self.game.score))
     score_text = self.score_font.render(
       score_text_content,
       False,
@@ -99,7 +98,7 @@ class Arena(GameObject):
     surface.blit(score_text, score_text_rect)
     
     # Draw tenths of a second
-    tenths_text_content = str(int(self.game.get_elapsed_time() * 10) % 10)
+    tenths_text_content = str(int(self.game.score * 10) % 10)
     tenths_text = self.tenths_font.render(
       tenths_text_content,
       False,
