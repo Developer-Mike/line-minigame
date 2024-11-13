@@ -9,7 +9,6 @@ if TYPE_CHECKING:
   from game import Game
 
 class Arena(GameObject):
-  arena_color = (189, 75, 76)
   arena_size = 48
   
   score_color = (138, 54, 55)
@@ -72,7 +71,7 @@ class Arena(GameObject):
     # Draw arena
     pygame.draw.rect(
       surface,
-      self.arena_color,
+      self.game.accent_color,
       self.rect
     )
     

@@ -1,7 +1,6 @@
 from  animation import Animation
 import pygame
 from pygame import Rect
-from arena import Arena
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -10,7 +9,6 @@ if TYPE_CHECKING:
 class GameOverAnimation(Animation):
   duration = .5
   inflate_step = 2
-  overlay_color = Arena.arena_color
  
   def __init__(self, game: 'Game'):
     super().__init__(game, self.duration)
@@ -46,6 +44,6 @@ class GameOverAnimation(Animation):
   def render(self, surface: pygame.Surface):
     pygame.draw.rect(
       surface,
-      self.overlay_color,
+      self.game.accent_color,
       self.rect
     )

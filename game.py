@@ -5,6 +5,8 @@ from player import Player
 from arena import Arena
 import time
 from game_over_animation import GameOverAnimation
+from title_text import TitleText
+from start_text import StartText
 
 class GameState:
   MENU = 0
@@ -13,6 +15,7 @@ class GameState:
 
 class Game:
   background_color = (0, 0, 0)
+  accent_color = (189, 75, 76)
   game_size = 64
   
   @property
@@ -27,7 +30,14 @@ class Game:
     pygame.init()
     
     self.clock = Clock()
+    
+    self.return_to_menu()
+    
+  def return_to_menu(self):
     self.__state = GameState.MENU
+    
+    self.title_text = TitleText(self)
+    self.start_text = StartText(self)
     
   def start_game(self):    
     self.__state = GameState.PLAYING
@@ -61,7 +71,14 @@ class Game:
     pygame.display.flip()
     
   def render_menu(self):
-    self.start_game() # TODO: Add actual menu
+    # Clear screen
+    self.surface.fill(self.accent_color)
+    
+    self.title_text.update()
+    self.start_text.update()
+    
+    self.title_text.render(self.surface)
+    self.start_text.render(self.surface)
     
   def render_game(self):
     # Clear screen
