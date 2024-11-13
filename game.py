@@ -1,13 +1,13 @@
 import pygame
 from pygame.time import Clock
 import ctypes
-from player import Player
-from arena import Arena
+from game_objects.game.player import Player
+from game_objects.game.arena import Arena
 import time
-from game_over_animation import GameOverAnimation
-from start_game_animation import StartGameAnimation
-from title_text import TitleText
-from start_text import StartText
+from game_objects.game_over.game_over_animation import GameOverAnimation
+from game_objects.menu.start_game_animation import StartGameAnimation
+from game_objects.menu.title_text import TitleText
+from game_objects.menu.start_text import StartText
 
 class GameState:
   MENU = 0

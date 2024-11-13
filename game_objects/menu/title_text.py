@@ -1,4 +1,4 @@
-from animation import Animation
+from game_objects.animation import Animation
 import pygame
 from pygame import Rect
 

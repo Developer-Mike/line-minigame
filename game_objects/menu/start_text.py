@@ -1,4 +1,4 @@
-from game_object import GameObject
+from game_objects.game_object import GameObject
 import pygame
 
 from typing import TYPE_CHECKING

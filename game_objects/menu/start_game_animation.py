@@ -1,4 +1,4 @@
-from  animation import Animation
+from  game_objects.animation import Animation
 import pygame
 from pygame import Rect
 
@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
   from game import Game
 
-class GameOverAnimation(Animation):
+class StartGameAnimation(Animation):
   duration = .5
   inflate_step = 2
  
@@ -14,18 +14,13 @@ class GameOverAnimation(Animation):
     super().__init__(game, self.duration)
     
     self.rect = Rect(
-      self.game.player.position,
-      self.game.player.player_size
+      self.game.title_text.rect.centerx,
+      self.game.title_text.rect.centery,
+      1, 1
     )
     
     self.last_step = self.get_progress()
-    steps_count = max(
-      self.game.player.position.x,
-      self.game.player.position.y,
-      self.game.game_size - self.game.player.position.x,
-      self.game.game_size - self.game.player.position.y
-    )
-    self.step_interval = self.duration / steps_count
+    self.step_interval = self.duration / (self.game.game_size / 2)
 
   def update(self):
     if self.get_progress() - self.last_step >= self.step_interval:
@@ -37,13 +32,12 @@ class GameOverAnimation(Animation):
         self.inflate_step * skipped_steps
       )
       
-      # Center the rectangle around the player
-      self.rect.left = int(self.game.player.position.x - self.rect.width / 2)
-      self.rect.top = int(self.game.player.position.y - self.rect.height / 2)
+      # Center the rectangle
+      self.rect.center = self.game.title_text.rect.center
 
   def render(self, surface: pygame.Surface):
     pygame.draw.rect(
       surface,
-      self.game.accent_color,
+      self.game.background_color,
       self.rect
     )

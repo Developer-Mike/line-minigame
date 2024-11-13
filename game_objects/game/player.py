@@ -1,6 +1,6 @@
 import pygame
 from pygame import Vector2, Rect
-from game_object import GameObject
+from game_objects.game_object import GameObject
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:

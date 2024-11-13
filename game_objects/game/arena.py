@@ -1,8 +1,8 @@
-from game_object import GameObject
+from game_objects.game_object import GameObject
 import pygame
 import random
 from pygame import Rect, Vector2
-from line import Line
+from game_objects.game.line import Line
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
