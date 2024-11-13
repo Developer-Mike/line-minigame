@@ -21,7 +21,7 @@ class Player(GameObject):
     super().__init__(game)
     
     self.last_position = Vector2(0, 0)
-    self.position = Vector2(0, 0)
+    self.position = Vector2(self.game.arena.rect.center - self.player_size / 2)
     self.velocity = Vector2(0, 0)
     
     self.position_y = 0

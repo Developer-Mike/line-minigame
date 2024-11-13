@@ -5,6 +5,7 @@ from player import Player
 from arena import Arena
 import time
 from game_over_animation import GameOverAnimation
+from start_game_animation import StartGameAnimation
 from title_text import TitleText
 from start_text import StartText
 
@@ -38,8 +39,9 @@ class Game:
     
     self.title_text = TitleText(self)
     self.start_text = StartText(self)
+    self.start_game_animation = None
     
-  def start_game(self):    
+  def start_game(self):      
     self.__state = GameState.PLAYING
     self.start_time = time.time()
     
@@ -71,6 +73,15 @@ class Game:
     pygame.display.flip()
     
   def render_menu(self):
+    if self.start_game_animation is not None:
+      self.start_game_animation.update()
+      self.start_game_animation.render(self.surface)
+      
+      if self.start_game_animation.is_finished():
+        self.start_game()
+      
+      return
+    
     # Clear screen
     self.surface.fill(self.accent_color)
     
@@ -79,6 +90,10 @@ class Game:
     
     self.title_text.render(self.surface)
     self.start_text.render(self.surface)
+    
+    if pygame.event.get(pygame.KEYDOWN) and pygame.key.get_pressed()[pygame.K_SPACE]:
+      if self.start_game_animation is not None: return
+      self.start_game_animation = StartGameAnimation(self)
     
   def render_game(self):
     # Clear screen
@@ -104,4 +119,4 @@ class Game:
     # Only allow to restart the game after the animation is finished
     for event in pygame.event.get():
       if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-        self.start_game()
+        self.return_to_menu()
