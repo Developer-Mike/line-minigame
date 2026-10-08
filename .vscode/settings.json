@@ -1,6 +1,0 @@
-{
-  "python.analysis.typeCheckingMode": "strict",
-  "code-runner.executorMap": {
-    "python": "python main.py #",
-  }
-}
