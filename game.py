@@ -1,6 +1,5 @@
 import pygame
 from pygame.time import Clock
-import ctypes
 from game_objects.game.player import Player
 from game_objects.game.arena import Arena
 import time
@@ -24,8 +23,7 @@ class Game:
   def state(self) -> int: return self.__state
   
   def __init__(self):
-    user32 = ctypes.windll.user32
-    self.screen_size = [user32.GetSystemMetrics(1), user32.GetSystemMetrics(1)]
+    self.screen_size = [1024, 1024]
     
     self.window = pygame.display.set_mode(self.screen_size)
     self.surface = pygame.Surface([self.game_size, self.game_size])
